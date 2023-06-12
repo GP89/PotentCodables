@@ -2,7 +2,7 @@
 //  CBORSerialization.swift
 //  PotentCodables
 //
-//  Copyright © 2019 Outfox, inc.
+//  Copyright © 2021 Outfox, inc.
 //
 //
 //  Distributed under the MIT License, See LICENSE for details.
@@ -13,10 +13,7 @@ import Foundation
 
 /// Convenience API for serializing and deserialization CBOR items.
 ///
-/// The API is simple and should fit most user's needs, if
-/// required users can drop down and use `CBORWriter`/
-/// `CBORReader` directly.
-public struct CBORSerialization {
+public enum CBORSerialization {
 
   /// Errors throws during serialization and deserialization
   ///
@@ -40,15 +37,17 @@ public struct CBORSerialization {
     case sequenceTooLong
     /// An invalid UTF-8 `string` sequence was encountered during deserialization
     case invalidUTF8String
+    /// Invalid integer size indicator
+    case invalidIntegerSize
   }
 
   /// Serialize `CBOR` value into a byte data.
   ///
   /// - Parameters:
-  ///     - with: The `CBOR` item to serialize
+  ///     - with: The ``CBOR`` item to serialize
   /// - Throws:
   ///     - `Swift.Error`: If any stream I/O error is encountered
-  public static func data(with value: CBOR) throws -> Data {
+  public static func data(from value: CBOR) throws -> Data {
     let stream = CBORDataStream()
     let encoder = CBORWriter(stream: stream)
     try encoder.encode(value)
@@ -77,7 +76,4 @@ public struct CBORSerialization {
     return try CBORReader(stream: stream).decodeRequiredItem()
   }
 
-  private init() {}
-
 }
-

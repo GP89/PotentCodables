@@ -2,7 +2,7 @@
 //  CBORStream.swift
 //  PotentCodables
 //
-//  Copyright © 2019 Outfox, inc.
+//  Copyright © 2021 Outfox, inc.
 //
 //
 //  Distributed under the MIT License, See LICENSE for details.
@@ -15,7 +15,7 @@ import Foundation
 public protocol CBORInputStream: AnyObject {
 
   func readByte() throws -> UInt8
-  func readBytes<T>(into: UnsafeMutablePointer<T>) throws -> Void
+  func readBytes<T>(into: UnsafeMutablePointer<T>) throws
   func readBytes(count: Int) throws -> Data
   func readInt<T>(_ type: T.Type) throws -> T where T: FixedWidthInteger
 
@@ -33,9 +33,9 @@ public protocol CBOROutputStream: AnyObject {
 }
 
 
-extension CBORInputStream {
+public extension CBORInputStream {
 
-  public func readInt<T>(_ type: T.Type) throws -> T where T: FixedWidthInteger {
+  func readInt<T>(_ type: T.Type) throws -> T where T: FixedWidthInteger {
     var value: T = 0
     try readBytes(into: &value)
     return T(bigEndian: value)
@@ -43,9 +43,9 @@ extension CBORInputStream {
 
 }
 
-extension CBOROutputStream {
+public extension CBOROutputStream {
 
-  public func writeInt<T>(_ int: T) throws where T: FixedWidthInteger {
+  func writeInt<T>(_ int: T) throws where T: FixedWidthInteger {
     try withUnsafeBytes(of: int.bigEndian) { ptr in
       try writeBytes(ptr.bindMemory(to: UInt8.self))
     }
@@ -54,7 +54,7 @@ extension CBOROutputStream {
 }
 
 
-/// A `CBORInputStream` & `CBOROutputStream` targeting a single `Data` value
+/// A ``CBORInputStream`` & ``CBOROutputStream`` targeting a single `Data` value
 public class CBORDataStream: CBORInputStream, CBOROutputStream {
 
   public private(set) var data: Data
@@ -99,7 +99,10 @@ public class CBORDataStream: CBORInputStream, CBOROutputStream {
   }
 
   public func writeBytes(_ ptr: UnsafeBufferPointer<UInt8>) throws {
-    data.append(ptr.baseAddress!, count: ptr.count)
+    guard let baseAddress = ptr.baseAddress else {
+      return
+    }
+    data.append(baseAddress, count: ptr.count)
   }
 
   public func writeBytes(_ data: Data) throws {
@@ -107,4 +110,3 @@ public class CBORDataStream: CBORInputStream, CBOROutputStream {
   }
 
 }
-
