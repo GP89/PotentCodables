@@ -1047,7 +1047,7 @@ extension InternalValueDecoder {
     else if type == Data.self || type == NSData.self {
       return try unbox(value, as: Data.self)
     }
-    else if type == UUID.self || type == CFUUID.self {
+    else if type == UUID.self {
       return try unbox(value, as: UUID.self)
     }
     else if type == URL.self || type == NSURL.self {
