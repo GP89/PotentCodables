@@ -279,7 +279,7 @@ public struct ASN1DecoderTransform: InternalDecoderTransform, InternalValueDeser
     switch try decode(value, decoder: decoder) {
     case let string as AnyString: return UUID(uuidString: string.storage)
     case let data as Data where data.count == 16:
-      return UUID(uuid: data.withUnsafeBytes { $0.bindMemory(to: uuid_t.self).first ?? UUID_NULL })
+      return UUID(uuid: data.withUnsafeBytes { $0.bindMemory(to: uuid_t.self).first ?? nullUUID })
     case .none: return nil
     case let invalid:
       throw DecodingError.typeMismatch(at: decoder.codingPath,
@@ -690,3 +690,6 @@ extension ASN1Decoder : TopLevelDecoder {
 }
 
 #endif
+
+private let nullUUID = uuid_t(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
