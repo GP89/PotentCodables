@@ -22,7 +22,7 @@ let package = Package(
   products: [
     .library(
       name: "PotentCodables",
-      targets: ["PotentCodables", "PotentJSON", "PotentCBOR", "PotentASN1"]
+      targets: ["PotentCodables", "PotentJSON", "PotentASN1"]
     ),
   ],
   dependencies: [
@@ -38,16 +38,12 @@ let package = Package(
       dependencies: ["PotentCodables"]
     ),
     .target(
-      name: "PotentCBOR",
-      dependencies: ["PotentCodables"]
-    ),
-    .target(
       name: "PotentASN1",
       dependencies: ["PotentCodables", "BigInt", "OrderedDictionary"]
     ),
     .testTarget(
       name: "PotentCodablesTests",
-      dependencies: ["PotentCodables", "PotentJSON", "PotentCBOR", "PotentASN1"],
+      dependencies: ["PotentCodables", "PotentJSON", "PotentASN1"],
       path: "./Tests"
     )
   ]
