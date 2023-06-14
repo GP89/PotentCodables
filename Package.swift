@@ -30,7 +30,7 @@ let package = Package(
   name: "PotentCodables",
   platforms: [
     .iOS(.v14),
-    .macOS(.v11),
+    .macOS(.v10_15),
     .watchOS(.v7),
     .tvOS(.v14),
   ],
